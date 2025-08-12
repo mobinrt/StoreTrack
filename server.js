@@ -17,7 +17,6 @@ app.use(cors());
 app.use(express.json());
 if (process.env.NODE_ENV !== 'production') app.use(morgan('dev'));
 
-// connect db
 connectDB();
 
 // health
@@ -27,7 +26,6 @@ app.get('/ping', (req, res) => res.json({ ok: true, time: Date.now() }));
 app.use('/api/items', itemsRoutes);
 app.use('/api/orders', ordersRoutes);
 
-// error handler
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
