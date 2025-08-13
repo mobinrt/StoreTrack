@@ -1,6 +1,7 @@
 const Order = require('../models/Order');
 const Item = require('../models/Item');
 const StockHistory = require('../models/StockHistory');
+const checkLowStock = require('../utils/lowStock');
 const { formatDoc, formatDocs } = require('../utils/formatDoc');
 
 /*
@@ -47,7 +48,6 @@ exports.createOrder = async (req, res, next) => {
 
     const order = await Order.create({ items, status: 'waiting' });
 
-    // log stock history
     for (const it of items) {
       await StockHistory.create({
         item: it.item,
@@ -55,9 +55,22 @@ exports.createOrder = async (req, res, next) => {
         quantity: it.quantity,
         orderId: order.orderId
       });
+
     }
-    
-    return res.status(201).json(formatDoc(order, ['_id', 'orderId', 'items', 'status', 'createdAt', 'updatedAt']));
+        
+    const threshold = Number(process.env.LOW_STOCK_THRESHOLD) || 5;
+    const lowStockItems = await checkLowStock(threshold);
+
+    if (lowStockItems.length > 0) {
+      console.warn('LOW STOCK ALERT:', lowStockItems.map(i => `${i.name} (${i.stockQuantity})`).join(', '));
+    }
+
+    const responseData = { order };
+    if (req.user?.role === 'admin' && lowStockItems.length > 0) {
+      responseData.lowStock = lowStockItems;
+    }
+
+    return res.status(201).json({ order, lowStock: lowStockItems });
   } catch (err) {
     next(err);
   }

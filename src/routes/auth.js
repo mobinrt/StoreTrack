@@ -28,7 +28,7 @@ const authController = require('../controllers/authController');
  *                 example: "mypassword123"
  *               role:
  *                 type: string
- *                 enum: [Admin, Staff]
+ *                 enum: [admin, staff]
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -38,7 +38,7 @@ router.post('/register', authController.register);
 
 /**
  * @swagger
- * /api/auth:
+ * /api/auth/login:
  *   post:
  *     summary: login
  *     tags:

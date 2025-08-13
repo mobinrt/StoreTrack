@@ -1,4 +1,5 @@
 const Item = require('../models/Item');
+const checkLowStock = require('../utils/lowStock');
 const { formatDoc, formatDocs } = require('../utils/formatDoc');
 
 exports.createItem = async (req, res, next) => {
@@ -9,7 +10,19 @@ exports.createItem = async (req, res, next) => {
     const item = new Item({ name, category, price, stockQuantity: stockQuantity || 0 });
     await item.save();
 
-    return res.status(201).json(formatDoc(item, 'itemId'));
+    const threshold = Number(process.env.LOW_STOCK_THRESHOLD) || 5;
+    const lowStockItems = await checkLowStock(threshold);
+
+    if (lowStockItems.length > 0) {
+      console.warn('LOW STOCK ALERT:', lowStockItems.map(i => `${i.name} (${i.stockQuantity})`).join(', '));
+    }
+
+    const responseData = { item };
+    if (req.user?.role === 'admin' && lowStockItems.length > 0) {
+      responseData.lowStock = lowStockItems;
+    }
+
+    return res.status(201).json(responseData);
   } catch (err) {
     next(err);
   }
@@ -71,8 +84,20 @@ exports.updateItem = async (req, res, next) => {
         quantity: Math.abs(stockChange)
       });
     }
+    
+    const threshold = Number(process.env.LOW_STOCK_THRESHOLD) || 5;
+    const lowStockItems = await checkLowStock(threshold);
 
-    return res.json(formatDoc(item, 'itemId'));
+    if (lowStockItems.length > 0) {
+      console.warn('LOW STOCK ALERT:', lowStockItems.map(i => `${i.name} (${i.stockQuantity})`).join(', '));
+    }
+
+    const responseData = { item };
+    if (req.user?.role === 'admin' && lowStockItems.length > 0) {
+      responseData.lowStock = lowStockItems;
+    }
+
+    return res.json(responseData);
   } catch (err) {
     next(err);
   }

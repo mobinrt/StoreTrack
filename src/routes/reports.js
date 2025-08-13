@@ -5,7 +5,7 @@ const { authenticate, requireRole } = require('../middleware/auth');
 
 /**
  * @swagger
- * /low-stock:
+ * /api/reports/low-stock:
  *   get:
  *     summary: Get list of low-stock items
  *     description: Returns a list of items whose stock quantity is below a given threshold. Requires admin role.
