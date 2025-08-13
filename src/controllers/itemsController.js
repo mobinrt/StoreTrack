@@ -1,4 +1,5 @@
-const Item = require('../models/item');
+const Item = require('../models/Item');
+const { formatDoc, formatDocs } = require('../utils/formatDoc');
 
 exports.createItem = async (req, res, next) => {
   try {
@@ -7,7 +8,8 @@ exports.createItem = async (req, res, next) => {
 
     const item = new Item({ name, category, price, stockQuantity: stockQuantity || 0 });
     await item.save();
-    return res.status(201).json(item);
+
+    return res.status(201).json(formatDoc(item, 'itemId'));
   } catch (err) {
     next(err);
   }
@@ -27,7 +29,8 @@ exports.listItems = async (req, res, next) => {
     const items = await Item.find(filter)
       .limit(Number(limit))
       .skip((Number(page) - 1) * Number(limit));
-    return res.json(items);
+
+    return res.json(formatDocs(items, 'itemId'));
   } catch (err) {
     next(err);
   }
@@ -35,9 +38,9 @@ exports.listItems = async (req, res, next) => {
 
 exports.getItem = async (req, res, next) => {
   try {
-    const item = await Item.findById(req.params.id);
+    const item = await Item.findOne({ itemId: req.params.id });
     if (!item) return res.status(404).json({ error: 'Item not found' });
-    return res.json(item);
+    return res.json(formatDoc(item, 'itemId'));
   } catch (err) {
     next(err);
   }
@@ -49,9 +52,9 @@ exports.updateItem = async (req, res, next) => {
     if (update.stockQuantity != null && update.stockQuantity < 0)
       return res.status(400).json({ error: 'stockQuantity cannot be negative' });
 
-    const item = await Item.findByIdAndUpdate(req.params.id, update, { new: true });
+    const item = await Item.findOneAndUpdate({ itemId: req.params.id }, update, { new: true });
     if (!item) return res.status(404).json({ error: 'Item not found' });
-    return res.json(item);
+    return res.json(formatDoc(item, 'itemId'));
   } catch (err) {
     next(err);
   }
@@ -59,9 +62,9 @@ exports.updateItem = async (req, res, next) => {
 
 exports.deleteItem = async (req, res, next) => {
   try {
-    const item = await Item.findByIdAndDelete(req.params.id);
+    const item = await Item.findOneAndDelete({ itemId: req.params.id });
     if (!item) return res.status(404).json({ error: 'Item not found' });
-    return res.json({ message: 'Item deleted' });
+    return res.json({ message: 'Item deleted', ...formatDoc(item, 'itemId') });
   } catch (err) {
     next(err);
   }
