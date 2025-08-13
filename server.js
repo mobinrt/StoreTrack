@@ -1,7 +1,6 @@
 require('dotenv').config();
 
 const swaggerUi = require('swagger-ui-express');
-const swaggerSpec = require('./src/config/swagger');
 
 const express = require('express');
 const morgan = require('morgan');
@@ -12,6 +11,9 @@ const connectDB = require('./src/config/db');
 const itemsRoutes = require('./src/routes/items');
 const ordersRoutes = require('./src/routes/orders');
 const stockHistoryRoutes = require('./src/routes/stockHistory');
+const authRoutes = require('./src/routes/auth');
+const swaggerSpec = require('./src/config/swagger');
+
 const errorHandler = require('./src/middleware/errorHandler');
 
 const app = express();
@@ -30,6 +32,7 @@ app.get('/ping', (req, res) => res.json({ ok: true, time: Date.now() }));
 app.use('/api/items', itemsRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/stock-history', stockHistoryRoutes);
+app.use('/api/auth', authRoutes);
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
