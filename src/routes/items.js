@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const itemsController = require('../controllers/itemsController');
+const { authenticate, requireRole } = require('../middleware/auth');
 
 /**
  * @swagger
@@ -34,8 +35,14 @@ const itemsController = require('../controllers/itemsController');
  *     responses:
  *       201:
  *         description: Item created
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
+ *       403:
+ *         description: Forbidden (user not an admin).
+ *       500:
+ *         description: Server error.
  */
-router.post('/', itemsController.createItem);
+router.post('/', authenticate, requireRole('admin'), itemsController.createItem);
 
 /**
  * @swagger
@@ -76,9 +83,12 @@ router.post('/', itemsController.createItem);
  *     responses:
  *       200:
  *         description: List of items
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
+ *       500:
+ *         description: Server error.
  */
-router.get('/', itemsController.listItems);
-
+router.get('/', authenticate, requireRole('admin', 'staff'), itemsController.listItems);
 /**
  * @swagger
  * /api/items/{id}:
@@ -95,11 +105,14 @@ router.get('/', itemsController.listItems);
  *     responses:
  *       200:
  *         description: Item details
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
  *       404:
- *         description: Item not found
+ *         description: Item not found 
+ *       500:
+ *         description: Server error.
  */
-router.get('/:id', itemsController.getItem);
-
+router.get('/:id', authenticate, requireRole('admin', 'staff'), itemsController.getItem);
 /**
  * @swagger
  * /api/items/{id}:
@@ -122,11 +135,16 @@ router.get('/:id', itemsController.getItem);
  *     responses:
  *       200:
  *         description: Updated item
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
+ *       403:
+ *         description: Forbidden (user not an admin).
  *       404:
- *         description: Item not found
+ *         description: Item not found 
+ *       500:
+ *         description: Server error.
  */
-router.put('/:id', itemsController.updateItem);
-
+router.put('/:id', authenticate, requireRole('admin'), itemsController.updateItem);
 /**
  * @swagger
  * /api/items/{id}:
@@ -143,10 +161,15 @@ router.put('/:id', itemsController.updateItem);
  *     responses:
  *       200:
  *         description: Item deleted
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
+ *       403:
+ *         description: Forbidden (user not an admin).
  *       404:
  *         description: Item not found
+ *       500:
+ *         description: Server error.
  */
-router.delete('/:id', itemsController.deleteItem);
-
+router.delete('/:id', authenticate, requireRole('admin'), itemsController.deleteItem);
 
 module.exports = router;

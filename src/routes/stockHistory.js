@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const stockHistoryController = require('../controllers/stockHistoryController');
+const { authenticate, requireRole } = require('../middleware/auth');
 
 /**
  * @swagger
@@ -35,8 +36,14 @@ const stockHistoryController = require('../controllers/stockHistoryController');
  *     responses:
  *       200:
  *         description: List of stock history entries
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
+ *       403:
+ *         description: Forbidden (user not an admin).
+ *       500:
+ *         description: Server error.
  */
-router.get('/', stockHistoryController.listStockHistory);
+router.get('/', authenticate, requireRole('admin'), stockHistoryController.listStockHistory);
 
 /**
  * @swagger
@@ -55,9 +62,15 @@ router.get('/', stockHistoryController.listStockHistory);
  *     responses:
  *       200:
  *         description: Stock history entry
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
+ *       403:
+ *         description: Forbidden (user not an admin).
  *       404:
  *         description: Entry not found
+ *       500:
+ *         description: Server error.
  */
-router.get('/:id', stockHistoryController.getStockHistory);
+router.get('/:id', authenticate, requireRole('admin'), stockHistoryController.getStockHistory);
 
 module.exports = router;

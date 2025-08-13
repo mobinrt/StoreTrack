@@ -8,10 +8,12 @@ const helmet = require('helmet');
 const cors = require('cors');
 
 const connectDB = require('./src/config/db');
+
 const itemsRoutes = require('./src/routes/items');
 const ordersRoutes = require('./src/routes/orders');
 const stockHistoryRoutes = require('./src/routes/stockHistory');
 const authRoutes = require('./src/routes/auth');
+const reportsRoutes = require('./src/routes/reports');
 const swaggerSpec = require('./src/config/swagger');
 
 const errorHandler = require('./src/middleware/errorHandler');
@@ -32,6 +34,7 @@ app.get('/ping', (req, res) => res.json({ ok: true, time: Date.now() }));
 app.use('/api/items', itemsRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/stock-history', stockHistoryRoutes);
+app.use('/api/reports', reportsRoutes);
 app.use('/api/auth', authRoutes);
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

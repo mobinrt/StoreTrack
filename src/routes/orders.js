@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ordersController = require('../controllers/ordersController');
+const { authenticate, requireRole } = require('../middleware/auth');
 
 /**
  * @swagger
@@ -37,8 +38,12 @@ const ordersController = require('../controllers/ordersController');
  *         description: Order created
  *       400:
  *         description: Validation error or insufficient stock
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
+ *       500:
+ *         description: Server error.
  */
-router.post('/', ordersController.createOrder);
+router.post('/', authenticate, requireRole('admin, staff'), ordersController.createOrder);
 
 /**
  * @swagger
@@ -57,8 +62,16 @@ router.post('/', ordersController.createOrder);
  *     responses:
  *       200:
  *         description: List of orders
+ *       400:
+ *         description: Invalid status
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
+ *       403:
+ *         description: Forbidden (user not an admin).
+ *       500:
+ *         description: Server error.
  */
-router.get('/', ordersController.listOrders);
+router.get('/', authenticate, requireRole('admin'), ordersController.listOrders);
 
 /**
  * @swagger
@@ -74,12 +87,20 @@ router.get('/', ordersController.listOrders);
  *         schema:
  *           type: string
  *     responses:
- *       200:
- *         description: Order details
+*        200:
+*         description: Order details
+ *       400:
+ *         description: Invalid status
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
+ *       403:
+ *         description: Forbidden (user not an admin).
  *       404:
  *         description: Order not found
+ *       500:
+ *         description: Server error.
  */
-router.get('/:id', ordersController.getOrder);
+router.get('/:id', authenticate, requireRole('admin'), ordersController.getOrder);
 
 /**
  * @swagger
@@ -112,9 +133,15 @@ router.get('/:id', ordersController.getOrder);
  *         description: Updated order
  *       400:
  *         description: Invalid status
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
+ *       403:
+ *         description: Forbidden (user not an admin).
  *       404:
  *         description: Order not found
+ *       500:
+ *         description: Server error.
  */
-router.put('/:id/status', ordersController.updateOrderStatus);
+router.put('/:id/status', authenticate, requireRole('admin'), ordersController.updateOrderStatus);
 
 module.exports = router;
