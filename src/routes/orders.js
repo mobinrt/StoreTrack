@@ -87,11 +87,11 @@ router.get('/', authenticate, requireRole('admin'), ordersController.listOrders)
  *         schema:
  *           type: string
  *     responses:
-*        200:
-*         description: Order details
+ *       200:
+ *         description: Order details
  *       400:
  *         description: Invalid status
- *       401:
+ *       401: 
  *         description: Unauthorized (missing or invalid token).
  *       403:
  *         description: Forbidden (user not an admin).
