@@ -12,7 +12,7 @@ const options = {
       { url: 'http://localhost:3000' }
     ],
   },
-  apis: ['./src/routes/*.js'], // files containing annotations for the Swagger docs
+  apis: ['./src/routes/*.js'], 
 };
 
 const swaggerSpec = swaggerJsdoc(options);

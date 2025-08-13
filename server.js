@@ -1,4 +1,8 @@
 require('dotenv').config();
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./src/config/swagger');
+
 const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
@@ -22,9 +26,10 @@ connectDB();
 // health
 app.get('/ping', (req, res) => res.json({ ok: true, time: Date.now() }));
 
-// routes
 app.use('/api/items', itemsRoutes);
 app.use('/api/orders', ordersRoutes);
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(errorHandler);
 
