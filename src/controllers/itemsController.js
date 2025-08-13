@@ -6,7 +6,17 @@ exports.createItem = async (req, res, next) => {
   try {
     const { name, category, price, stockQuantity } = req.body;
     if (!name || price == null) return res.status(400).json({ error: 'name and price are required' });
+    if (!category) {
+      return res.status(400).json({ error: 'category is required' });
+    }
 
+    const existingItem = await Item.findOne({ name, category });
+    if (existingItem) {
+      return res.status(409).json({
+        error: `Item with name "${name}" already exists in category "${category}"`
+      });
+    }
+    
     const item = new Item({ name, category, price, stockQuantity: stockQuantity || 0 });
     await item.save();
 
