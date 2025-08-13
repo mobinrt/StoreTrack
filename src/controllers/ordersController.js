@@ -48,9 +48,15 @@ exports.createOrder = async (req, res, next) => {
     const order = await Order.create({ items, status: 'waiting' });
 
     // log stock history
-    const histories = items.map(it => ({ item: it.item, changeType: 'out', quantity: it.quantity }));
-    await StockHistory.insertMany(histories);
-
+    for (const it of items) {
+      await StockHistory.create({
+        item: it.item,
+        changeType: 'out',
+        quantity: it.quantity,
+        orderId: order.orderId
+      });
+    }
+    
     return res.status(201).json(formatDoc(order, ['_id', 'orderId', 'items', 'status', 'createdAt', 'updatedAt']));
   } catch (err) {
     next(err);
@@ -99,9 +105,16 @@ exports.updateOrderStatus = async (req, res, next) => {
         Item.findOneAndUpdate({ itemId: it.item }, { $inc: { stockQuantity: it.quantity } })
       );
       await Promise.all(ops);
+      
 
-      const histories = order.items.map(it => ({ item: it.item, changeType: 'in', quantity: it.quantity }));
-      await StockHistory.insertMany(histories);
+      for (const it of order.items) {
+        await StockHistory.create({
+          item: it.item,
+          changeType: 'in',
+          quantity: it.quantity,
+          orderId: order.orderId
+        });
+      }
     }
 
     order.status = status;

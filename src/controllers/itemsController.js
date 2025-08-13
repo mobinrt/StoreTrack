@@ -52,8 +52,26 @@ exports.updateItem = async (req, res, next) => {
     if (update.stockQuantity != null && update.stockQuantity < 0)
       return res.status(400).json({ error: 'stockQuantity cannot be negative' });
 
-    const item = await Item.findOneAndUpdate({ itemId: req.params.id }, update, { new: true });
+    const item = await Item.findOne({ itemId: req.params.id });
     if (!item) return res.status(404).json({ error: 'Item not found' });
+
+    let stockChange = 0;
+    if (update.stockQuantity != null) {
+      stockChange = update.stockQuantity - item.stockQuantity; // positive=in, negative=out
+    }
+
+    Object.assign(item, update);
+    await item.save();
+
+    if (stockChange !== 0) {
+      const StockHistory = require('../models/StockHistory');
+      await StockHistory.create({
+        item: item.itemId,
+        changeType: stockChange > 0 ? 'in' : 'out',
+        quantity: Math.abs(stockChange)
+      });
+    }
+
     return res.json(formatDoc(item, 'itemId'));
   } catch (err) {
     next(err);

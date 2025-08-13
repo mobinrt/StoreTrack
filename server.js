@@ -11,6 +11,7 @@ const cors = require('cors');
 const connectDB = require('./src/config/db');
 const itemsRoutes = require('./src/routes/items');
 const ordersRoutes = require('./src/routes/orders');
+const stockHistoryRoutes = require('./src/routes/stockHistory');
 const errorHandler = require('./src/middleware/errorHandler');
 
 const app = express();
@@ -28,6 +29,7 @@ app.get('/ping', (req, res) => res.json({ ok: true, time: Date.now() }));
 
 app.use('/api/items', itemsRoutes);
 app.use('/api/orders', ordersRoutes);
+app.use('/api/stock-history', stockHistoryRoutes);
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

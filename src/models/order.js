@@ -7,11 +7,10 @@ const orderItemSchema = new mongoose.Schema({
 });
 
 const orderSchema = new mongoose.Schema({
-  orderId: { type: String, required: true, unique: true },
   items: { type: [orderItemSchema], required: true },
   status: { type: String, enum: ['waiting', 'sent', 'canceled'], default: 'waiting' }
 }, { timestamps: true });
 
-orderItemSchema.plugin(AutoIncrement, { inc_field: 'orderId' });
+orderSchema.plugin(AutoIncrement, { inc_field: 'orderId' });
 
 module.exports = mongoose.model('Order', orderSchema);

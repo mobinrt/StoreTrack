@@ -5,7 +5,9 @@ const stockHistorySchema = new mongoose.Schema({
   item: { type: String, required: true },
   changeType: { type: String, enum: ['in', 'out'], required: true },
   quantity: { type: Number, required: true },
-  createdAt: { type: Date, default: Date.now }
+  orderId: { type: String }, 
+  createdAt: { type: Date, default: Date.now },
+  stockHistoryId:{ type: Number}
 });
 
 stockHistorySchema.plugin(AutoIncrement, { inc_field: 'stockHistoryId' });
