@@ -73,7 +73,7 @@ exports.createOrder = async (req, res, next) => {
       responseData.lowStock = lowStockItems;
     }
 
-    return res.status(201).json({ order, lowStock: lowStockItems });
+    return res.status(201).json(responseData);
   } catch (err) {
     next(err);
   }
