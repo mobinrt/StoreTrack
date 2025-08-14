@@ -4,12 +4,6 @@ const StockHistory = require('../models/StockHistory');
 const checkLowStock = require('../utils/lowStock');
 const { formatDoc, formatDocs } = require('../utils/formatDoc');
 
-/*
-  Strategy:
-  - Each ordered item decrements stock atomically using itemId.
-  - Rollback if any item fails.
-  - For production, use real MongoDB transactions for full ACID safety.
-*/
 
 exports.createOrder = async (req, res, next) => {
   try {
