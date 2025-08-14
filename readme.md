@@ -135,6 +135,7 @@ docker-compose down -v
 **Stock History**
 
 * `GET /api/stock-history` → Get stock change records
+* `GET /api/stock-history:id` → Get stock change record
 
 **Reports**
 
