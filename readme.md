@@ -130,7 +130,6 @@ docker-compose down -v
 * `GET /api/orders` → List orders
 * `GET /api/orders/:id` → Get single order
 * `PUT /api/orders/:id/status` → Update order status
-* `DELETE /api/orders/:id` → Delete order (admin only)
 
 **Stock History**
 
