@@ -1,18 +1,18 @@
 const Order = require('../models/Order');
 const Item = require('../models/Item');
 const StockHistory = require('../models/StockHistory');
+const checkLowStock = require('../utils/lowStock');
 const { formatDoc, formatDocs } = require('../utils/formatDoc');
 
-/*
-  Strategy:
-  - Each ordered item decrements stock atomically using itemId.
-  - Rollback if any item fails.
-  - For production, use real MongoDB transactions for full ACID safety.
-*/
 
 exports.createOrder = async (req, res, next) => {
   try {
     const { items } = req.body;
+    console.log(req.user.userId)
+    if (!req.user || !req.user.userId) {
+      return res.status(401).json({ error: 'Unauthorized: user not logged in' });
+    }
+
     if (!Array.isArray(items) || items.length === 0)
       return res.status(400).json({ error: 'items array is required' });
 
@@ -45,9 +45,12 @@ exports.createOrder = async (req, res, next) => {
       deducted.push({ itemId, qty: quantity });
     }
 
-    const order = await Order.create({ items, status: 'waiting' });
+    const order = await Order.create({
+      userId: req.user.userId, 
+      items, 
+      status: 'waiting' 
+    });
 
-    // log stock history
     for (const it of items) {
       await StockHistory.create({
         item: it.item,
@@ -55,9 +58,22 @@ exports.createOrder = async (req, res, next) => {
         quantity: it.quantity,
         orderId: order.orderId
       });
+
     }
-    
-    return res.status(201).json(formatDoc(order, ['_id', 'orderId', 'items', 'status', 'createdAt', 'updatedAt']));
+        
+    const threshold = Number(process.env.LOW_STOCK_THRESHOLD) || 5;
+    const lowStockItems = await checkLowStock(threshold);
+
+    if (lowStockItems.length > 0) {
+      console.warn('LOW STOCK ALERT:', lowStockItems.map(i => `${i.name} (${i.stockQuantity})`).join(', '));
+    }
+
+    const responseData = { order };
+    if (req.user?.role === 'admin' && lowStockItems.length > 0) {
+      responseData.lowStock = lowStockItems;
+    }
+
+    return res.status(201).json(responseData);
   } catch (err) {
     next(err);
   }

@@ -16,9 +16,10 @@ const authRoutes = require('./src/routes/auth');
 const reportsRoutes = require('./src/routes/reports');
 const swaggerSpec = require('./src/config/swagger');
 
+const authMiddleware = require('./src/middleware/endPointLock');
 const errorHandler = require('./src/middleware/errorHandler');
 
-const app = express();
+const app = express(); 
 
 // middleware
 app.use(helmet());
@@ -30,6 +31,8 @@ connectDB();
 
 // health
 app.get('/ping', (req, res) => res.json({ ok: true, time: Date.now() }));
+
+app.use(authMiddleware)
 
 app.use('/api/items', itemsRoutes);
 app.use('/api/orders', ordersRoutes);

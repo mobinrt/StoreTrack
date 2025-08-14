@@ -16,6 +16,6 @@ userSchema.methods.validatePassword = function (plain) {
   return bcrypt.compare(plain, this.passwordHash);
 };
 
-userSchema.plugin(AutoIncrement, { inc_field: 'stockHistoryId' });
+userSchema.plugin(AutoIncrement, { inc_field: 'userId' });
 
 module.exports = mongoose.model('User', userSchema);

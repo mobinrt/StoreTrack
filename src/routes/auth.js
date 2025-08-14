@@ -4,11 +4,11 @@ const authController = require('../controllers/authController');
 
 /**
  * @swagger
- * /api/auth:
+ * /api/auth/register:
  *   post:
  *     summary: Create a new user
  *     tags:
- *      - Auth
+ *       - Auth
  *     requestBody:
  *       required: true
  *       content:
@@ -25,19 +25,20 @@ const authController = require('../controllers/authController');
  *                 example: Ali
  *               password:
  *                 type: string
+ *                 example: "mypassword123"
  *               role:
- *                 type: enum: [Admin, Staff]
+ *                 type: string
+ *                 enum: [admin, staff]
  *     responses:
  *       201:
- *         description: User register
+ *         description: User registered successfully
  */
-
 router.post('/register', authController.register);
 
 
 /**
  * @swagger
- * /api/auth:
+ * /api/auth/login:
  *   post:
  *     summary: login
  *     tags:

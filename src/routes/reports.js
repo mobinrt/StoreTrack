@@ -5,7 +5,7 @@ const { authenticate, requireRole } = require('../middleware/auth');
 
 /**
  * @swagger
- * /low-stock:
+ * /api/reports/low-stock:
  *   get:
  *     summary: Get list of low-stock items
  *     description: Returns a list of items whose stock quantity is below a given threshold. Requires admin role.
@@ -46,5 +46,59 @@ const { authenticate, requireRole } = require('../middleware/auth');
  *         description: Server error.
  */
 router.get('/low-stock', authenticate, requireRole('admin'), reportsController.lowStock);
+
+/**
+ * @swagger
+ * /api/reports/sales:
+ *   get:
+ *     summary: Get sales report
+ *     tags:
+ *       - Reports
+ *     parameters:
+ *       - in: query
+ *         name: start
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Start date for report (inclusive)
+ *       - in: query
+ *         name: end
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: End date for report (inclusive)
+ *     responses:
+ *       200:
+ *         description: Sales report data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalRevenue:
+ *                   type: number
+ *                   example: 1234.56
+ *                 totalOrders:
+ *                   type: integer
+ *                   example: 10
+ *                 topSelling:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         example: Apple
+ *                       sold:
+ *                         type: integer
+ *                         example: 50
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
+ *       403:
+ *         description: Forbidden (user not an admin).
+ *       500:
+ *         description: Server error
+ */
+router.get('/sales', authenticate, requireRole('admin'), reportsController.salesReport);
 
 module.exports = router;
