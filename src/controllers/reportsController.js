@@ -27,7 +27,7 @@ exports.salesReport = async (req, res, next) => {
     const allItemIds = [];
     for (const order of orders) {
       for (const it of order.items) {
-        allItemIds.push(parseInt(it.item, 10)); // string → number
+        allItemIds.push(parseInt(it.item, 10));
       }
     }
 

@@ -92,6 +92,10 @@ router.get('/low-stock', authenticate, requireRole('admin'), reportsController.l
  *                       sold:
  *                         type: integer
  *                         example: 50
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
+ *       403:
+ *         description: Forbidden (user not an admin).
  *       500:
  *         description: Server error
  */

@@ -43,7 +43,7 @@ const { authenticate, requireRole } = require('../middleware/auth');
  *       500:
  *         description: Server error.
  */
-router.post('/', authenticate, requireRole('admin, staff'), ordersController.createOrder);
+router.post('/', authenticate, requireRole('admin', 'staff'), ordersController.createOrder);
 
 /**
  * @swagger

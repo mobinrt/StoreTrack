@@ -8,6 +8,11 @@ const { formatDoc, formatDocs } = require('../utils/formatDoc');
 exports.createOrder = async (req, res, next) => {
   try {
     const { items } = req.body;
+    console.log(req.user.userId)
+    if (!req.user || !req.user.userId) {
+      return res.status(401).json({ error: 'Unauthorized: user not logged in' });
+    }
+
     if (!Array.isArray(items) || items.length === 0)
       return res.status(400).json({ error: 'items array is required' });
 
@@ -40,7 +45,11 @@ exports.createOrder = async (req, res, next) => {
       deducted.push({ itemId, qty: quantity });
     }
 
-    const order = await Order.create({ items, status: 'waiting' });
+    const order = await Order.create({
+      userId: req.user.userId, 
+      items, 
+      status: 'waiting' 
+    });
 
     for (const it of items) {
       await StockHistory.create({
