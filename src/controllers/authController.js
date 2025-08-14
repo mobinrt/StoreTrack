@@ -4,8 +4,8 @@ const User = require('../models/User');
 exports.register = async (req, res, next) => {
   try {
     const { username, password, role } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ error: 'username and password required' });
+    if (!username || !password || !role) {
+      return res.status(400).json({ error: 'username, password, and role required ' });
     }
 
     const exists = await User.findOne({ username });
