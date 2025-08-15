@@ -1,6 +1,18 @@
 version: '3.9'
 
 services:
+  frontend:
+    build: ./frontend
+    container_name: storetrack-frontend
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3000/api
+    depends_on:
+      - api
+    command: npm start -- --port 3001
+
   api:
     build: .
     container_name: storetrack-api
@@ -9,6 +21,8 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/storetrack
     depends_on:
       - mongo
 

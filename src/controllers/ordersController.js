@@ -98,7 +98,9 @@ exports.listOrders = async (req, res, next) => {
 
 exports.getOrder = async (req, res, next) => {
   try {
-    const order = await Order.findOne({ orderId: req.params.id }).populate('items.item');
+    // Try to find by _id first, then by orderId
+    const order = await Order.findById(req.params.id).populate('items.item').catch(() => null) || 
+                  await Order.findOne({ orderId: req.params.id }).populate('items.item');
     if (!order) return res.status(404).json({ error: 'Order not found' });
     return res.json(formatDoc(order, ['_id', 'orderId', 'items', 'status', 'createdAt', 'updatedAt']));
   } catch (err) {
@@ -112,7 +114,9 @@ exports.updateOrderStatus = async (req, res, next) => {
     if (!['waiting', 'sent', 'canceled'].includes(status))
       return res.status(400).json({ error: 'invalid status' });
 
-    const order = await Order.findOne({ orderId: req.params.id });
+    // Try to find by _id first, then by orderId
+    const order = await Order.findById(req.params.id).catch(() => null) || 
+                  await Order.findOne({ orderId: req.params.id });
     if (!order) return res.status(404).json({ error: 'Order not found' });
 
     // if cancelling, restore stock & log history

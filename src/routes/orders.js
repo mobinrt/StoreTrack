@@ -71,7 +71,7 @@ router.post('/', authenticate, requireRole('admin', 'staff'), ordersController.c
  *       500:
  *         description: Server error.
  */
-router.get('/', authenticate, requireRole('admin'), ordersController.listOrders);
+router.get('/', authenticate, requireRole('admin', 'staff'), ordersController.listOrders);
 
 /**
  * @swagger
@@ -100,7 +100,7 @@ router.get('/', authenticate, requireRole('admin'), ordersController.listOrders)
  *       500:
  *         description: Server error.
  */
-router.get('/:id', authenticate, requireRole('admin'), ordersController.getOrder);
+router.get('/:id', authenticate, requireRole('admin', 'staff'), ordersController.getOrder);
 
 /**
  * @swagger
