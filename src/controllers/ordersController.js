@@ -1,6 +1,6 @@
-const Order = require('../models/Order');
-const Item = require('../models/Item');
-const StockHistory = require('../models/StockHistory');
+const Order = require('../models/order');
+const Item = require('../models/item');
+const StockHistory = require('../models/stockHistory');
 const checkLowStock = require('../utils/lowStock');
 const { formatDoc, formatDocs } = require('../utils/formatDoc');
 
@@ -83,14 +83,24 @@ exports.listOrders = async (req, res, next) => {
   try {
     const { status } = req.query;
     const filter = {};
-    if (status) filter.status = status;
+
+    if (req.user.role !== 'admin') {
+      filter.userId = req.user.userId; 
+    }
+
+    if (status) {
+      filter.status = status;
+    }
 
     const orders = await Order.find(filter)
       .populate('items.item')
       .sort({ createdAt: -1 })
       .limit(200);
 
-    return res.json(formatDocs(orders, ['_id', 'orderId', 'items', 'status', 'createdAt', 'updatedAt']));
+    userId = req.user.userId
+    return res.json(formatDocs(orders, [
+      '_id', 'orderId', 'items', 'status', 'createdAt', 'updatedAt', 'userId'
+    ]));
   } catch (err) {
     next(err);
   }
@@ -98,11 +108,22 @@ exports.listOrders = async (req, res, next) => {
 
 exports.getOrder = async (req, res, next) => {
   try {
-    // Try to find by _id first, then by orderId
-    const order = await Order.findById(req.params.id).populate('items.item').catch(() => null) || 
-                  await Order.findOne({ orderId: req.params.id }).populate('items.item');
-    if (!order) return res.status(404).json({ error: 'Order not found' });
-    return res.json(formatDoc(order, ['_id', 'orderId', 'items', 'status', 'createdAt', 'updatedAt']));
+    let order =
+      await Order.findById(req.params.id).populate('items.item').catch(() => null) ||
+      await Order.findOne({ orderId: req.params.id }).populate('items.item');
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    if (req.user.role !== 'admin' && order.userId !== req.user.userId) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    userId = req.user.userId
+    return res.json(formatDoc(order, [
+      '_id', 'orderId', 'items', 'status', 'createdAt', 'updatedAt', 'userId'
+    ]));
   } catch (err) {
     next(err);
   }
@@ -114,7 +135,6 @@ exports.updateOrderStatus = async (req, res, next) => {
     if (!['waiting', 'sent', 'canceled'].includes(status))
       return res.status(400).json({ error: 'invalid status' });
 
-    // Try to find by _id first, then by orderId
     const order = await Order.findById(req.params.id).catch(() => null) || 
                   await Order.findOne({ orderId: req.params.id });
     if (!order) return res.status(404).json({ error: 'Order not found' });

@@ -1,4 +1,4 @@
-const Item = require('../models/Item');
+const Item = require('../models/item');
 const checkLowStock = require('../utils/lowStock');
 const { formatDoc, formatDocs } = require('../utils/formatDoc');
 
@@ -87,7 +87,7 @@ exports.updateItem = async (req, res, next) => {
     await item.save();
 
     if (stockChange !== 0) {
-      const StockHistory = require('../models/StockHistory');
+      const StockHistory = require('../models/stockHistory');
       await StockHistory.create({
         item: item.itemId,
         changeType: stockChange > 0 ? 'in' : 'out',

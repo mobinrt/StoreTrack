@@ -350,7 +350,7 @@ export default function OrdersPage() {
   const [statusFilter, setStatusFilter] = useState('');
 
   const { data: orders, isLoading } = useOrders({
-    status: statusFilter || undefined,
+    status: statusFilter as "waiting" | "sent" | "canceled" | undefined,
   });
 
   const filteredOrders = orders || [];

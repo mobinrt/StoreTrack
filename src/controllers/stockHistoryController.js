@@ -1,4 +1,4 @@
-const StockHistory = require('../models/StockHistory');
+const StockHistory = require('../models/stockHistory');
 
 exports.listStockHistory = async (req, res, next) => {
   try {
