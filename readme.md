@@ -61,7 +61,7 @@ A modern, full-stack inventory management system built with Node.js, Express, Mo
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/storetrack.git
+git clone https://github.com/mobinrt/StoreTrack.git
 cd storetrack
 ```
 
