@@ -1,4 +1,4 @@
-const Item = require('../models/Item');
+const Item = require('../models/item');
 
 /**
  * Checks for low-stock items and returns them.

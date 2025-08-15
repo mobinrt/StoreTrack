@@ -1,5 +1,5 @@
-const Item = require('../models/Item');
-const Order = require('../models/Order');
+const Item = require('../models/item');
+const Order = require('../models/order');
 
 exports.lowStock = async (req, res, next) => {
   try {

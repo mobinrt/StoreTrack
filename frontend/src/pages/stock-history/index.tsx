@@ -11,7 +11,7 @@ export default function StockHistoryPage() {
 
   const { data: stockHistory, isLoading } = useStockHistory({
     item: itemFilter || undefined,
-    changeType: changeTypeFilter || undefined,
+    changeType: changeTypeFilter as "in" | "out" | undefined,
   });
 
   const { data: items } = useItems();
