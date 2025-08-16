@@ -358,3 +358,5 @@ For issues and questions, please open an issue on GitHub.
 ## Pictures
 <img width="1920" height="1080" alt="Screenshot (226)" src="https://github.com/user-attachments/assets/d6dddc01-fea2-4167-8110-6a354bd03b54" />
 <img width="1920" height="1080" alt="Screenshot (227)" src="https://github.com/user-attachments/assets/4d9cda58-f210-4309-a80c-2217798be1a1" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e9a06b70-4319-4cb9-8116-049fd5dda332" />
+
