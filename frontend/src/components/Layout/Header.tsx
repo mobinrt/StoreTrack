@@ -3,7 +3,6 @@ import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { 
   Bars3Icon, 
-  BellIcon, 
   UserCircleIcon,
   ArrowRightOnRectangleIcon,
 } from '@heroicons/react/24/outline';
@@ -39,13 +38,6 @@ export default function Header() {
 
         {/* Right side */}
         <div className="flex items-center space-x-4">
-          {/* Notifications */}
-          <button className="p-2 rounded-lg hover:bg-gray-100 relative">
-            <BellIcon className="w-5 h-5 text-gray-500" />
-            {/* Notification badge */}
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
-
           {/* User menu */}
           <Menu as="div" className="relative">
             <Menu.Button className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">

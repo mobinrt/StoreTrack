@@ -272,6 +272,16 @@ function OrderDetailsModal({ isOpen, onClose, order }: OrderDetailsModalProps) {
                       <p className="text-sm text-gray-600">Total</p>
                       <p className="font-medium">${calculateTotal().toFixed(2)}</p>
                     </div>
+                    <div>
+                      <p className="text-sm text-gray-600">User ID</p>
+                      <p className="font-medium">#{order.userId}</p>
+                    </div>
+                    {role === 'admin' && order.username && (
+                      <div>
+                        <p className="text-sm text-gray-600">Customer</p>
+                        <p className="font-medium">{order.username}</p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Order Items */}
@@ -424,6 +434,8 @@ export default function OrdersPage() {
               <thead>
                 <tr>
                   <th>Order ID</th>
+                  <th>User ID</th>
+                  {role === 'admin' && <th>Customer</th>}
                   <th>Items</th>
                   <th>Status</th>
                   <th>Created</th>
@@ -434,6 +446,10 @@ export default function OrdersPage() {
                 {filteredOrders.map((order) => (
                   <tr key={order._id}>
                     <td className="font-medium">#{order.orderId}</td>
+                    <td>#{order.userId}</td>
+                    {role === 'admin' && (
+                      <td>{order.username || `User #${order.userId}`}</td>
+                    )}
                     <td>{order.items.length} items</td>
                     <td>
                       <span className={`badge ${getStatusBadge(order.status)}`}>

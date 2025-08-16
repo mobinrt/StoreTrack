@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ordersApi } from '@/lib/api';
 import type { Order, CreateOrderRequest, UpdateOrderStatusRequest, OrderFilters } from '@/types';
-import { useUIStore } from '@/store/ui';
 
 export const useOrders = (filters: OrderFilters = {}) => {
   return useQuery({
@@ -21,7 +20,6 @@ export const useOrder = (id: string) => {
 
 export const useCreateOrder = () => {
   const queryClient = useQueryClient();
-  const { showNotification } = useUIStore();
 
   return useMutation({
     mutationFn: (data: CreateOrderRequest) => {
@@ -40,18 +38,15 @@ export const useCreateOrder = () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
       queryClient.invalidateQueries({ queryKey: ['items'] }); // Refresh items to show updated stock
       queryClient.invalidateQueries({ queryKey: ['stock-history'] });
-      showNotification('Order created successfully', 'success');
     },
     onError: (error: any) => {
-      const message = error.response?.data?.error || 'Failed to create order';
-      showNotification(message, 'error');
+      console.error('Failed to create order:', error);
     },
   });
 };
 
 export const useUpdateOrderStatus = () => {
   const queryClient = useQueryClient();
-  const { showNotification } = useUIStore();
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateOrderStatusRequest }) => 
@@ -61,11 +56,9 @@ export const useUpdateOrderStatus = () => {
       queryClient.invalidateQueries({ queryKey: ['order', id] });
       queryClient.invalidateQueries({ queryKey: ['items'] }); // Refresh items for stock updates
       queryClient.invalidateQueries({ queryKey: ['stock-history'] });
-      showNotification('Order status updated successfully', 'success');
     },
     onError: (error: any) => {
-      const message = error.response?.data?.error || 'Failed to update order status';
-      showNotification(message, 'error');
+      console.error('Failed to update order status:', error);
     },
   });
 };

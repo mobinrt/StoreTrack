@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { EyeIcon, EyeSlashIcon, UserIcon, LockClosedIcon, CubeIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import { useAuthStore } from '@/store/auth';
-import { useUIStore } from '@/store/ui';
 import Button from '@/components/UI/Button';
 import Input from '@/components/UI/Input';
 import type { RegisterRequest } from '@/types';
@@ -12,7 +11,6 @@ import type { RegisterRequest } from '@/types';
 export default function RegisterPage() {
   const router = useRouter();
   const { register: registerUser, isLoading, error, isAuthenticated, clearError } = useAuthStore();
-  const { showNotification } = useUIStore();
   const [showPassword, setShowPassword] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterRequest>();
@@ -32,7 +30,6 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterRequest) => {
     try {
       await registerUser(data);
-      showNotification('Registration successful! Please login.', 'success');
       router.push('/login');
     } catch (error) {
       // Error is handled by the store

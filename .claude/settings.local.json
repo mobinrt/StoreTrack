@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(net start:*)",
+      "Bash(mongod:*)",
+      "Bash(docker run:*)",
+      "Bash(cat:*)",
+      "Bash(timeout 5 npm run dev)",
+      "Bash(curl:*)",
+      "Bash(where mongod)",
+      "Bash(sc query:*)",
+      "Bash(docker:*)",
+      "Bash(powershell:*)",
+      "Bash(node:*)",
+      "Bash(telnet:*)",
+      "Bash(rm:*)"
+    ],
+    "defaultMode": "acceptEdits",
+    "additionalDirectories": [
+      "C:\\Users\\thisi\\Desktop\\ErfanMhp\\University4032\\IE\\project"
+    ]
+  }
+}

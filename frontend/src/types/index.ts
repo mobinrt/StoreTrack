@@ -76,6 +76,7 @@ export interface Order {
   _id: string;
   orderId: number;
   userId: number;
+  username?: string; // Only available for admin
   items: OrderItem[];
   status: 'waiting' | 'sent' | 'canceled';
   createdAt: string;

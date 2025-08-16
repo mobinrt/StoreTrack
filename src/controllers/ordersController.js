@@ -96,10 +96,24 @@ exports.listOrders = async (req, res, next) => {
       .populate('items.item')
       .sort({ createdAt: -1 })
       .limit(200);
+    
+    // Populate user information for admin
+    if (req.user.role === 'admin') {
+      const User = require('../models/User');
+      const userIds = [...new Set(orders.map(order => order.userId))];
+      const users = await User.find({ userId: { $in: userIds } });
+      const userMap = new Map(users.map(user => [user.userId, user]));
+      
+      orders.forEach(order => {
+        const user = userMap.get(order.userId);
+        if (user) {
+          order._doc.username = user.username;
+        }
+      });
+    }
 
-    userId = req.user.userId
     return res.json(formatDocs(orders, [
-      '_id', 'orderId', 'items', 'status', 'createdAt', 'updatedAt', 'userId'
+      '_id', 'orderId', 'items', 'status', 'createdAt', 'updatedAt', 'userId', 'username'
     ]));
   } catch (err) {
     next(err);
@@ -120,9 +134,17 @@ exports.getOrder = async (req, res, next) => {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    userId = req.user.userId
+    // Populate user information for admin
+    if (req.user.role === 'admin') {
+      const User = require('../models/User');
+      const user = await User.findOne({ userId: order.userId });
+      if (user) {
+        order._doc.username = user.username;
+      }
+    }
+
     return res.json(formatDoc(order, [
-      '_id', 'orderId', 'items', 'status', 'createdAt', 'updatedAt', 'userId'
+      '_id', 'orderId', 'items', 'status', 'createdAt', 'updatedAt', 'userId', 'username'
     ]));
   } catch (err) {
     next(err);

@@ -4,7 +4,6 @@ import { useAuthStore } from '@/store/auth';
 import { useUIStore } from '@/store/ui';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import Notification from '../UI/Notification';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -60,7 +59,6 @@ export default function Layout({ children, title }: LayoutProps) {
           </div>
         </main>
       </div>
-      <Notification />
     </div>
   );
 }

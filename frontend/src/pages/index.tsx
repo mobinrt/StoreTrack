@@ -61,10 +61,10 @@ export default function Dashboard() {
   const { role } = useAuthStore();
   const { data: items, isLoading: itemsLoading } = useItems();
   const { data: orders, isLoading: ordersLoading } = useOrders();
-  const { data: lowStockReport, isLoading: lowStockLoading } = useLowStockReport();
+  const { data: lowStockReport, isLoading: lowStockLoading } = role === 'admin' ? useLowStockReport() : { data: null, isLoading: false };
   const { data: salesReport, isLoading: salesLoading } = useSalesReport();
 
-  const isLoading = itemsLoading || ordersLoading || lowStockLoading || (role === 'admin' && salesLoading);
+  const isLoading = itemsLoading || ordersLoading || (role === 'admin' && (lowStockLoading || salesLoading));
 
   if (isLoading) {
     return <Loading text="Loading dashboard..." />;
@@ -109,12 +109,14 @@ export default function Dashboard() {
           icon={CubeIcon}
           color="primary"
         />
-        <StatCard
-          title="Low Stock Items"
-          value={lowStockCount}
-          icon={ExclamationTriangleIcon}
-          color="warning"
-        />
+        {role === 'admin' && (
+          <StatCard
+            title="Low Stock Items"
+            value={lowStockCount}
+            icon={ExclamationTriangleIcon}
+            color="warning"
+          />
+        )}
         <StatCard
           title="Total Orders"
           value={totalOrders}
@@ -171,34 +173,36 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Low Stock Alert */}
-        <div className="card">
-          <div className="card-header">
-            <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-              <ExclamationTriangleIcon className="w-5 h-5 mr-2 text-yellow-500" />
-              Low Stock Alert
-            </h2>
-          </div>
-          <div className="space-y-4">
-            {lowStockReport?.items.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">All items are well stocked</p>
-            ) : (
-              lowStockReport?.items.slice(0, 5).map((item) => (
-                <div key={item._id} className="flex items-center justify-between p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">{item.name}</p>
-                    <p className="text-sm text-gray-600">{item.category}</p>
-                    <p className="text-xs text-gray-500">${item.price}</p>
+        {/* Low Stock Alert - Admin Only */}
+        {role === 'admin' && (
+          <div className="card">
+            <div className="card-header">
+              <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+                <ExclamationTriangleIcon className="w-5 h-5 mr-2 text-yellow-500" />
+                Low Stock Alert
+              </h2>
+            </div>
+            <div className="space-y-4">
+              {lowStockReport?.items.length === 0 ? (
+                <p className="text-gray-500 text-center py-8">All items are well stocked</p>
+              ) : (
+                lowStockReport?.items.slice(0, 5).map((item) => (
+                  <div key={item._id} className="flex items-center justify-between p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div>
+                      <p className="font-medium text-gray-900">{item.name}</p>
+                      <p className="text-sm text-gray-600">{item.category}</p>
+                      <p className="text-xs text-gray-500">${item.price}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-yellow-600">{item.stockQuantity}</p>
+                      <p className="text-xs text-gray-500">in stock</p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-yellow-600">{item.stockQuantity}</p>
-                    <p className="text-xs text-gray-500">in stock</p>
-                  </div>
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Admin-only Sales Report */}

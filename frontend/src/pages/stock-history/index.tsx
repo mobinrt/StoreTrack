@@ -18,7 +18,10 @@ export default function StockHistoryPage() {
 
   // Create a map of item IDs to item names for display
   const itemsMap = new Map();
-  items?.forEach(item => itemsMap.set(item._id, item));
+  items?.forEach(item => {
+    itemsMap.set(item.itemId.toString(), item); // Map by itemId as string
+    itemsMap.set(item._id, item); // Also keep _id for compatibility
+  });
 
   if (isLoading) {
     return <Loading text="Loading stock history..." />;
@@ -55,7 +58,7 @@ export default function StockHistoryPage() {
             >
               <option value="">All Items</option>
               {items?.map(item => (
-                <option key={item._id} value={item._id}>
+                <option key={item._id} value={item.itemId}>
                   {item.name}
                 </option>
               ))}
@@ -99,14 +102,14 @@ export default function StockHistoryPage() {
               </thead>
               <tbody>
                 {stockHistory.map((history) => {
-                  const item = itemsMap.get(history.item);
+                  const item = itemsMap.get(history.item.toString()) || itemsMap.get(history.item);
                   return (
                     <tr key={history._id}>
                       <td className="font-medium">
                         <div className="flex items-center space-x-2">
                           <div>
-                            <p className="font-medium">{item?.name || 'Unknown Item'}</p>
-                            <p className="text-sm text-gray-600">{item?.category}</p>
+                            <p className="font-medium">{item?.name || `Item #${history.item}`}</p>
+                            <p className="text-sm text-gray-600">{item?.category || 'ID: ' + history.item}</p>
                           </div>
                         </div>
                       </td>
