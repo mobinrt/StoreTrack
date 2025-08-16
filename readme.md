@@ -354,3 +354,7 @@ For issues and questions, please open an issue on GitHub.
 - Built with modern web technologies
 - Designed for scalability and maintainability
 - Follows best practices for security and performance
+  
+## Pictures
+<img width="1920" height="1080" alt="Screenshot (226)" src="https://github.com/user-attachments/assets/d6dddc01-fea2-4167-8110-6a354bd03b54" />
+<img width="1920" height="1080" alt="Screenshot (227)" src="https://github.com/user-attachments/assets/4d9cda58-f210-4309-a80c-2217798be1a1" />
